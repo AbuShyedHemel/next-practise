@@ -7,21 +7,26 @@ import {
     FormField,
     FormItem,
     FormLabel,
-    FormMessage
+    FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { authAPI } from "@/service/api/apis/authAPI";
-import { productsAPI } from "@/service/api/apis/productAPI";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ReloadIcon } from "@radix-ui/react-icons";
-import { QueryClient, QueryClientProvider, useMutation, useQuery } from '@tanstack/react-query';
+import {
+    QueryClient,
+    QueryClientProvider,
+    useMutation,
+} from "@tanstack/react-query";
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 import { z } from "zod";
 
 const formSchema = z.object({
     username: z.string(),
-    password: z.string()
-})
+    password: z.string(),
+});
 
 const UserLogin = () => {
     const queryClient = new QueryClient();
@@ -29,38 +34,47 @@ const UserLogin = () => {
         <QueryClientProvider client={queryClient}>
             <LoginPage />
         </QueryClientProvider>
-    )
-}
+    );
+};
 export default UserLogin;
 
 const LoginPage = () => {
+    const route = useRouter();
     const form = useForm<API.LoginUserPayload>({
         resolver: zodResolver(formSchema),
         defaultValues: {
-            username: '',
+            username: "",
         },
-    })
+    });
     const onSubmit = (values: API.LoginUserPayload) => {
-        return userLoginAPI.mutate(values)
-    }
+        return userLoginAPI.mutate(values);
+    };
     const userLoginAPI = useMutation({
-        mutationKey: ['login-user'],
+        mutationKey: ["login-user"],
         mutationFn: (payload?: API.LoginUserPayload) => authAPI.loginUser(payload),
-        onError: (data) => {
-            console.log(data)
-        }
-    })
-
-    const getProductDetails = useQuery({
-        queryKey: ['product'],
-        queryFn: () => productsAPI.getProduct(),
-    })
-
+        onSuccess: (data) => {
+            if (data.status === 200) {
+                route.push("dashboard");
+            }
+            if (data.status === 400) {
+                toast.error('Error', {
+                    style: {
+                        color: 'red'
+                    }
+                    ,
+                    description: '',
+                })
+            }
+        },
+    });
 
     return (
         <div className="flex justify-center items-center w-full h-full">
             <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} className="w-2/3 space-y-6">
+                <form
+                    onSubmit={form.handleSubmit(onSubmit)}
+                    className="w-2/3 space-y-6"
+                >
                     <FormField
                         control={form.control}
                         name="username"
@@ -94,10 +108,15 @@ const LoginPage = () => {
                         )}
                     />
                     <Button type="submit">
-                        <ReloadIcon className={userLoginAPI?.isPending ? 'mr-2 h-4 w-4 animate-spin' : 'hidden'} />
-                        Submit</Button>
+                        <ReloadIcon
+                            className={
+                                userLoginAPI?.isPending ? "mr-2 h-4 w-4 animate-spin" : "hidden"
+                            }
+                        />
+                        Submit
+                    </Button>
                 </form>
             </Form>
-        </div >
+        </div>
     );
 };
