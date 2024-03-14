@@ -1,23 +1,45 @@
+import { RequestBody, RequestOptions } from "./types";
+
 export class HttpAuthService {
-    baseURL: string
-    constructor(url: string){this.baseURL = url}
+  baseURL: string;
+  constructor(url: string) {
+    this.baseURL = url;
+  }
 
-    get(url?: string){
-        return requestService.fetchService(this.baseURL,url,'GET')
+  get<T>(url: string, options?: RequestOptions) {
+    return this.request<T>(url, "GET", null, options);
+  }
+  post<T>(url: string, body: unknown, options?: RequestOptions) {
+    return this.request<T>(url, "POST", JSON.stringify(body), options);
+  }
+
+  private async request<T>(
+    url: string,
+    method: "GET" | "POST" | "PUT" | "DELETE",
+    body: RequestBody,
+    options?: RequestOptions
+  ) {
+    const requestURL = `${this.baseURL}${url}`;
+    const headers: RequestOptions["headers"] = {
+      "Content-Type": "application/json",
+      Accept: "application/json",
+      ...options?.headers,
+    };
+    try {
+      const response = await fetch(requestURL, {
+        method,
+        body,
+        headers,
+      });
+
+      if (response.ok) {
+        return await response.json();
+      }
+    } catch (error) {
+      return {} as T;
     }
-    post(url?: string,payload?: {}){
-        return requestService.fetchService(this.baseURL,url,'POST',payload)
-    }
+  }
 }
 
-
-export class RequestService {
-    fetchService(baseURL: string,url?: string,method?: 'GET' | 'POST',payload?: {}){
-        return fetch(`${baseURL}${url}`,{
-            method: `${method}`,
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
-        })
-    }
-}
-export const requestService = new RequestService
+export class RequestService {}
+export const requestService = new RequestService();

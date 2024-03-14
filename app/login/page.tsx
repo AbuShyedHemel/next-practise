@@ -11,11 +11,12 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { authAPI } from "@/service/api/apis/authAPI";
-import { productsAPI } from "@/service/api/apis/productAPI";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ReloadIcon } from "@radix-ui/react-icons";
-import { QueryClient, QueryClientProvider, useMutation, useQuery } from '@tanstack/react-query';
+import { QueryClient, QueryClientProvider, useMutation } from '@tanstack/react-query';
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 import { z } from "zod";
 
 const formSchema = z.object({
@@ -34,6 +35,7 @@ const UserLogin = () => {
 export default UserLogin;
 
 const LoginPage = () => {
+    const router = useRouter()
     const form = useForm<API.LoginUserPayload>({
         resolver: zodResolver(formSchema),
         defaultValues: {
@@ -46,19 +48,29 @@ const LoginPage = () => {
     const userLoginAPI = useMutation({
         mutationKey: ['login-user'],
         mutationFn: (payload?: API.LoginUserPayload) => authAPI.loginUser(payload),
-        onError: (data) => {
-            console.log(data)
+        onSuccess: (data) => {
+            if (data.status === 400) {
+                toast("Could Not find any account", {
+                    style: {
+                        'color': 'red'
+                    },
+                    description: "Error",
+                    action: {
+                        label: "Undo",
+                        onClick: () => console.log("Undo"),
+                    },
+                })
+            }
+            if (data.status === 200) {
+                console.log('OK');
+
+            }
         }
     })
 
-    const getProductDetails = useQuery({
-        queryKey: ['product'],
-        queryFn: () => productsAPI.getProduct(),
-    })
-
-
     return (
         <div className="flex justify-center items-center w-full h-full">
+
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="w-2/3 space-y-6">
                     <FormField
