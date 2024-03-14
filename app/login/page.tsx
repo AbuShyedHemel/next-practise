@@ -11,9 +11,10 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { authAPI } from "@/service/api/apis/authAPI";
+import { productsAPI } from "@/service/api/apis/productAPI";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ReloadIcon } from "@radix-ui/react-icons";
-import { QueryClient, QueryClientProvider, useMutation } from '@tanstack/react-query';
+import { QueryClient, QueryClientProvider, useMutation, useQuery } from '@tanstack/react-query';
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -33,21 +34,28 @@ const UserLogin = () => {
 export default UserLogin;
 
 const LoginPage = () => {
-    const form = useForm<z.infer<typeof formSchema>>({
+    const form = useForm<API.LoginUserPayload>({
         resolver: zodResolver(formSchema),
         defaultValues: {
             username: '',
         },
     })
-    const onSubmit = (values: z.infer<typeof formSchema>) => {
+    const onSubmit = (values: API.LoginUserPayload) => {
         return userLoginAPI.mutate(values)
     }
     const userLoginAPI = useMutation({
-        mutationFn: (payload?: z.infer<typeof formSchema>) => authAPI.loginUser(payload),
-        onSuccess: (data) => {
+        mutationKey: ['login-user'],
+        mutationFn: (payload?: API.LoginUserPayload) => authAPI.loginUser(payload),
+        onError: (data) => {
             console.log(data)
         }
     })
+
+    const getProductDetails = useQuery({
+        queryKey: ['product'],
+        queryFn: () => productsAPI.getProduct(),
+    })
+
 
     return (
         <div className="flex justify-center items-center w-full h-full">

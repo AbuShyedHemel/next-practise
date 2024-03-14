@@ -1,11 +1,12 @@
-import axios from "axios"
-import { z } from "zod"
 import { LoginUserPayload } from "../@type"
-import { httpAuthService } from "@/service/http.service"
+import { HttpAuthService } from "@/service/http.service"
 
 class AuthAPI {
+    constructor(private http: HttpAuthService){}
+
     loginUser(payload?: LoginUserPayload){
-        return httpAuthService(payload,'auth/login')
+        return this.http.post('auth/login',payload)
     }
 }
-export const authAPI = new AuthAPI
+const httpAuthService = new HttpAuthService('https://dummyjson.com/')
+export const authAPI = new AuthAPI(httpAuthService)

@@ -1,7 +1,23 @@
-import axios from "axios"
+export class HttpAuthService {
+    baseURL: string
+    constructor(url: string){this.baseURL = url}
 
-const baseURL = "https://dummyjson.com"
-export const httpAuthService = (body?: unknown,url?:string,requestType?: "post" | 'get' | 'patch' | 'delete') => {
-    return requestType === 'post' && axios.post(`${baseURL}/${url}`, { body })
-    // return requestType === 'get' && axios.get(`${baseURL}/${url}`)
+    get(url?: string){
+        return requestService.fetchService(this.baseURL,url,'GET')
+    }
+    post(url?: string,payload?: {}){
+        return requestService.fetchService(this.baseURL,url,'POST',payload)
+    }
 }
+
+
+export class RequestService {
+    fetchService(baseURL: string,url?: string,method?: 'GET' | 'POST',payload?: {}){
+        return fetch(`${baseURL}${url}`,{
+            method: `${method}`,
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        })
+    }
+}
+export const requestService = new RequestService
