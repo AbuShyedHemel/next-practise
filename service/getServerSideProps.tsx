@@ -1,6 +1,7 @@
+'use server'
 import config from "@/utils/hosts"
 
-export async function getData() {
+export async function getServerSideProps() {
     const res = await fetch(`${config.apiKey}products/1`, {
         method: 'GET',
         headers: { 'Content-Type': 'application/json' },

@@ -1,20 +1,16 @@
+"use client";
+import { getServerSideProps } from "@/service/getServerSideProps";
+import { useQuery } from "@tanstack/react-query";
 
-import { productsAPI } from "@/service/api/apis/productAPI";
-import { QueryClient } from "@tanstack/react-query";
+const Dashboard = () => {
+    // const data = getServerSideProps()
 
-const Dashboard = async () => {
-    const queryClient = new QueryClient()
+    const getProductDetails = useQuery({
+        queryKey: ["products"],
+        queryFn: async () => await getServerSideProps(),
+    });
+    console.log(getProductDetails);
+    return <div></div>;
+};
 
-    const getProductDetails = await queryClient.fetchQuery({
-        queryKey: ['products'],
-        queryFn: () => productsAPI.getProduct()
-    })
-
-    console.log(getProductDetails.formData);
-
-    return (
-        <div></div>
-    )
-}
-
-export default Dashboard
+export default Dashboard;
