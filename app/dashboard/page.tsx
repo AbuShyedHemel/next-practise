@@ -1,15 +1,19 @@
-"use client"
-import { productsAPI } from "@/service/api/apis/productAPI"
-import { useQuery } from "@tanstack/react-query"
 
-const Dashboard = () => {
+import { productsAPI } from "@/service/api/apis/productAPI";
+import { QueryClient } from "@tanstack/react-query";
 
-    const getProductDetails = useQuery({
+const Dashboard = async () => {
+    const queryClient = new QueryClient()
+
+    const getProductDetails = await queryClient.fetchQuery({
         queryKey: ['products'],
         queryFn: () => productsAPI.getProduct()
     })
+
+    console.log(getProductDetails.formData);
+
     return (
-        <div>Dashboard</div>
+        <div></div>
     )
 }
 

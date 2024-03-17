@@ -1,5 +1,5 @@
-import { ReactQueryClientProvider } from "@/components/RectQueryClientProvider";
 import { Toaster } from "@/components/ui/sonner";
+import { ReactQueryClientProvider } from "@/utils/RectQueryClientProvider";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
