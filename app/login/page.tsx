@@ -40,18 +40,12 @@ const LoginPage = () => {
   const userLoginAPI = useMutation({
     mutationKey: ["login-user"],
     mutationFn: (payload: API.LoginUserPayload) => authAPI.loginUser(payload),
-    onSuccess: (res) => {
-      if (res?.status === 200) {
-        route.push("dashboard");
-      }
-      if (res?.status !== 200) {
-        toast.error("Error", {
-          style: {
-            color: "red",
-          },
-          description: "",
-        });
-      }
+    onError: () => {
+      toast.error("Username or Password invalid");
+    },
+    onSuccess: () => {
+      toast.success("Successfully Logged In");
+      route.push("dashboard");
     },
   });
 

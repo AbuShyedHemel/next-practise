@@ -29,7 +29,7 @@ export class RequestService {
       return res.json();
     }
     if (!res.ok) {
-      return res;
+      throw Error;
     }
   }
 }

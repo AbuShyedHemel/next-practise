@@ -11,7 +11,7 @@ const Products = () => {
   });
 
   return (
-    <div className="ml-5 mt-5">
+    <div className="p-10">
       <p>Product Name: {data?.title}</p>
       <p>Price: ${data?.price}</p>
       <p>Rating: {data?.rating}</p>
