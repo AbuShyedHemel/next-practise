@@ -5,7 +5,7 @@ import { useQuery } from "@tanstack/react-query";
 import Image from "next/image";
 
 const Products = () => {
-  const { data } = useQuery<API.GetProductDetails>({
+  const { data } = useQuery({
     queryKey: ["products"],
     queryFn: () => productsAPI.getProduct(),
   });
