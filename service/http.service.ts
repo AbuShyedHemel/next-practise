@@ -13,7 +13,7 @@ export class HttpAuthService {
 }
 
 export class RequestService {
-  async fetchService(
+  async fetchService<T>(
     baseURL: string,
     url?: string,
     method?: "GET" | "POST",
@@ -29,7 +29,7 @@ export class RequestService {
       return res.json();
     }
     if (!res.ok) {
-      console.log("Some thing went wrong");
+      return res;
     }
   }
 }
