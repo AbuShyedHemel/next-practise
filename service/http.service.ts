@@ -5,10 +5,10 @@ export class HttpAuthService {
   }
 
   get<T>(url?: string) {
-    return requestService.fetchService(this.baseURL, url, "GET");
+    return request.fetchService(this.baseURL, url, "GET");
   }
   post(url?: string, payload?: {}) {
-    return requestService.fetchService(this.baseURL, url, "POST", payload);
+    return request.fetchService(this.baseURL, url, "POST", payload);
   }
 }
 
@@ -33,4 +33,4 @@ export class RequestService {
     }
   }
 }
-export const requestService = new RequestService();
+export const request = new RequestService();
