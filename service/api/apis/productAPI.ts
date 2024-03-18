@@ -5,7 +5,7 @@ class ProductAPI {
   constructor(private http: HttpAuthService) {}
 
   getProduct() {
-    return this.http.get("products/1");
+    return this.http.get<API.LoginUserPayload>("products/1");
   }
 }
 

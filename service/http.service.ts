@@ -4,7 +4,7 @@ export class HttpAuthService {
     this.baseURL = url;
   }
 
-  get(url?: string) {
+  get<T>(url?: string) {
     return requestService.fetchService(this.baseURL, url, "GET");
   }
   post(url?: string, payload?: {}) {
@@ -13,17 +13,24 @@ export class HttpAuthService {
 }
 
 export class RequestService {
-  fetchService(
+  async fetchService(
     baseURL: string,
     url?: string,
     method?: "GET" | "POST",
     payload?: {}
   ) {
-    return fetch(`${baseURL}${url}`, {
+    const res = await fetch(`${baseURL}${url}`, {
       method: `${method}`,
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
     });
+
+    if (res.ok) {
+      return res.json();
+    }
+    if (!res.ok) {
+      console.log("Some thing went wrong");
+    }
   }
 }
 export const requestService = new RequestService();

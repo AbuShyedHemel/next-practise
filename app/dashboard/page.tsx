@@ -1,16 +1,29 @@
-"use client";
-import { getServerSideProps } from "@/service/getServerSideProps";
-import { useQuery } from "@tanstack/react-query";
+import { productsAPI } from "@/service/api/apis/productAPI";
+import {
+    HydrationBoundary,
+    QueryClient,
+    dehydrate,
+} from "@tanstack/react-query";
+import Products from "./Products";
 
-const Dashboard = () => {
-    // const data = getServerSideProps()
+// async function getProductsDetails() {
+//     const calling = productsAPI.getProduct()
+//     return (await calling).json()
+// }
 
-    const getProductDetails = useQuery({
+const Dashboard = async () => {
+    const queryClient = new QueryClient();
+
+    await queryClient.prefetchQuery({
         queryKey: ["products"],
-        queryFn: async () => await getServerSideProps(),
+        queryFn: () => productsAPI.getProduct(),
     });
-    console.log(getProductDetails);
-    return <div></div>;
+
+    return (
+        <HydrationBoundary state={dehydrate(queryClient)}>
+            <Products />
+        </HydrationBoundary>
+    );
 };
 
 export default Dashboard;
