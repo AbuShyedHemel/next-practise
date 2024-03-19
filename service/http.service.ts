@@ -1,44 +1,46 @@
-export class HttpAuthService {
-  baseURL: string;
-  constructor(url: string) {
-    this.baseURL = url;
-  }
+type HttpServiceConfig = {
+  getCookie?: (key: string) => Promise<string | null | undefined>;
+};
+export class HttpService {
+  baseUrl: string;
+  config: HttpServiceConfig | undefined;
 
-  get<T>(url: string, payload?: {}) {
-    return request.fetchService<T>(this.baseURL, url, "GET", payload);
-  }
-  post<T>(url: string, payload?: {}) {
-    return request.fetchService<T>(this.baseURL, url, "POST", payload);
-  }
-  patch<T>(url: string, payload?: {}) {
-    return request.fetchService<T>(this.baseURL, url, "PATCH", payload);
-  }
-  delete<T>(url: string, payload?: {}) {
-    return request.fetchService<T>(this.baseURL, url, "DELETE", payload);
-  }
-}
+  private headers: Record<string, string> = {
+    Connection: "keep-alive",
+    Accept: "application/json, text/plain, */*",
+    "Content-Type": "application/json",
+  };
 
-export class RequestService {
-  async fetchService<T>(
-    baseURL: string,
-    url: string,
-    method: "GET" | "POST" | "PATCH" | "DELETE",
-    payload?: {}
-  ): Promise<T> {
-    const token = localStorage.getItem("token");
+  constructor(baseUrl: string, config?: HttpServiceConfig) {
+    this.baseUrl = baseUrl;
+    this.config = config;
+  }
+  request = async <TData = unknown>(url: string, options?: RequestInit) => {
+    const token = await this.config?.getCookie?.("token");
+    if (token) this.headers["Authorization"] = `Bearer ${token}`;
+    try {
+      const response = await fetch(url, { ...options, headers: this.headers });
 
-    const res = await fetch(`${baseURL}${url}`, {
-      method: `${method}`,
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify(payload),
-    });
-    if (!res.ok) {
-      throw Error;
+      const data = await response.json();
+
+      if (response.ok) {
+        return data as TData;
+      }
+    } catch (error) {
+      if (error instanceof Error) throw error;
+      throw new Error("Something went wrong!");
     }
-    return res.json();
+  };
+
+  get<TData = unknown>(path: string) {
+    return this.request<TData>(`${this.baseUrl}${path}`);
+  }
+
+  post<TData = unknown>(path: string, body: unknown, options?: RequestInit) {
+    return this.request<TData>(`${this.baseUrl}${path}`, {
+      ...options,
+      method: "POST",
+      body: JSON.stringify(body),
+    });
   }
 }
-export const request = new RequestService();

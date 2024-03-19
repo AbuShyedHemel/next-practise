@@ -1,33 +1,41 @@
 "use client";
 
-import { productsAPI } from "@/service/api/apis/productAPI";
+import { getProducts } from "@/actions/produts";
 import { useQuery } from "@tanstack/react-query";
 import Image from "next/image";
 
 const Products = () => {
-  const { data } = useQuery({
+  const products = useQuery({
     queryKey: ["products"],
-    queryFn: () => productsAPI.getProduct(),
+    queryFn: () => getProducts(),
   });
 
-  return (
-    <div className="p-10">
-      <p>Product Name: {data?.title}</p>
-      <p>Price: ${data?.price}</p>
-      <p>Rating: {data?.rating}</p>
-      <div className="flex gap-5">
-        {data?.images?.map((image, index) => (
-          <Image
-            src={image}
-            key={index}
-            alt="product-picture"
-            height={300}
-            width={300}
-          />
-        ))}
+  if (products.isLoading) {
+    return <p>Loading...</p>;
+  }
+
+  if (products.isSuccess) {
+    return (
+      <div className="p-10">
+        <p>Product Name: {products.data?.title}</p>
+        <p>Price: ${products.data?.price}</p>
+        <p>Rating: {products.data?.rating}</p>
+        <div className="flex gap-5">
+          {products.data?.images?.map((image, index) => (
+            <Image
+              src={image}
+              key={index}
+              alt="product-picture"
+              height={300}
+              width={300}
+            />
+          ))}
+        </div>
       </div>
-    </div>
-  );
+    );
+  }
+
+  return <p>Error</p>;
 };
 
 export default Products;

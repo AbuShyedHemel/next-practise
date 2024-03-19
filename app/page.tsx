@@ -1,4 +1,5 @@
 "use client";
+import { loginUser } from "@/actions/auth";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -11,7 +12,6 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import LoginBanner from "@/public/giphy.gif";
-import { authAPI } from "@/service/api/apis/authAPI";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ReloadIcon } from "@radix-ui/react-icons";
 import { useMutation } from "@tanstack/react-query";
@@ -39,12 +39,11 @@ const LoginPage = () => {
   };
   const userLoginAPI = useMutation({
     mutationKey: ["login-user"],
-    mutationFn: (payload: API.LoginUserPayload) => authAPI.loginUser(payload),
+    mutationFn: (payload: API.LoginUserPayload) => loginUser(payload),
     onError: () => {
       toast.error("Username or Password invalid");
     },
     onSuccess: (data) => {
-      localStorage.setItem("token", data?.token);
       toast.success("Successfully Logged In");
       route.push("dashboard");
     },
