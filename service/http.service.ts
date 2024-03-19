@@ -25,9 +25,14 @@ export class RequestService {
     method: "GET" | "POST" | "PATCH" | "DELETE",
     payload?: {}
   ): Promise<T> {
+    const token = localStorage.getItem("token");
+
     const res = await fetch(`${baseURL}${url}`, {
       method: `${method}`,
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
       body: JSON.stringify(payload),
     });
     if (!res.ok) {
