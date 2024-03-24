@@ -2,6 +2,6 @@
 
 import { productsAPI } from "@/service/api/apis/productAPI";
 
-export const getProducts = () => {
-  return productsAPI.getProduct();
+export const getProducts = (id: string) => {
+  return productsAPI.getProduct(id);
 };

@@ -1,18 +1,11 @@
-import Products from "./Products";
+import { Button } from "@/components/ui/button";
 
-const Dashboard = async () => {
-  // const queryClient = new QueryClient();
-
-  // await queryClient.prefetchQuery({
-  //   queryKey: ["products"],
-  //   queryFn: () => productsAPI.getProduct(),
-  // });
-
+const page = () => {
   return (
-    // <HydrationBoundary state={dehydrate(queryClient)}>
-    <Products />
-    // </HydrationBoundary>
+    <div>
+      <Button>Go Next</Button>;
+    </div>
   );
 };
 
-export default Dashboard;
+export default page;

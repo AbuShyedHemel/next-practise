@@ -5,8 +5,8 @@ import config from "@/utils/hosts";
 class ProductAPI {
   constructor(private http: HttpService) {}
 
-  getProduct() {
-    return this.http.get<API.GetProductDetails>("products/1");
+  getProduct(id: string) {
+    return this.http.get<API.GetProductDetails>(`products/${id}`);
   }
 }
 
