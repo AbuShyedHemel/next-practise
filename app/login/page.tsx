@@ -46,7 +46,7 @@ const LoginPage = () => {
     },
     onSuccess: (data) => {
       toast.success("Successfully Logged In");
-      route.push("dashboard");
+      route.push("product");
     },
   });
 
@@ -94,13 +94,9 @@ const LoginPage = () => {
               )}
             />
             <Button type="submit">
-              <ReloadIcon
-                className={
-                  userLoginAPI?.isPending
-                    ? "mr-2 h-4 w-4 animate-spin"
-                    : "hidden"
-                }
-              />
+              {userLoginAPI?.isPending && (
+                <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
+              )}
               Submit
             </Button>
           </form>
